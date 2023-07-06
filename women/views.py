@@ -6,6 +6,9 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 # from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
+
 from .forms import *
 from .models import *
 from .utils import *
@@ -39,7 +42,12 @@ class WomenHome(DataMixin, ListView):
 #     return render(request, 'women/index.html', context=context)
 
 def about(request): #HttpRequest
-    return render(request, 'women/about.html', {'menu': menu, 'title': 'О сайте'})
+    contact_list = Women.objects.all()
+    paginator = Paginator(contact_list, 3)
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'women/about.html', {'page_obj': page_obj, 'menu': menu, 'title': 'О сайте'})
 
 
 class AddPage(LoginRequiredMixin, DataMixin, CreateView):
